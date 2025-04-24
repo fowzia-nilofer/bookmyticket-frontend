@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Selection</title>
+    <style>
+        body {
+            background-color: #0b1d2c;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Wrapper for movie info */
+        .header-section {
+            padding: 30px 20px 10px 20px;
+        }
+        
+        #movieTitle {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        #moviePoster {
+            width: 150px;
+            height: 225px; /* Fixed height for poster aspect ratio */
+            border-radius: 8px;
+            margin-bottom: 20px;
+            object-fit: cover; /* Ensures the image maintains proper proportions */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            background-color: #1a1a1a; /* Background color in case image fails to load */
+        }
+        
+        /* Legend alignment */
+        #status {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Date and time buttons */
+        #date, #time {
+            margin: 20px 0;
+        }
+        
+        .buttons {
+            margin: 5px;
+            padding: 10px 15px;
+            border: none;
+            background-color: #1b263b;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .buttons.selected {
+            background-color: #43d6f4;
+        }
+        
+        /* Seat grid */
+        #theater {
+            margin: 30px auto;
+            max-width: 600px;
+        }
+        
+        .screen {
+            background-color: #43d6f4;
+            height: 10px;
+            width: 80%;
+            margin: 0 auto 30px auto;
+            border-radius: 5px;
+        }
+        
+        .seats {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+        }
+        
+        .seat {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background-color: #939090;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .seat.selected {
+            background-color: #43d6f4;
+        }
+        
+        .seat.occupied {
+            background-color: #3e3d3d;
+            cursor: not-allowed;
+        }
+        
+        /* Proceed button */
+        #proceedBtn {
+            background-color: #ff4757;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            margin-top: 20px;
+        }
+        
+        #proceedBtn:hover {
+            background-color: #ff0022;
+        }
+        
+        /* Footer */
+        #footer {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #1a1a1a;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <h3 id="movieTitle">Loading...</h3>
+        <img id="moviePoster" src="/api/placeholder/150/225" alt="Movie Poster">
+    </div>
+    
+    <div id="date">
+        Select Date:
+        <button class="buttons date-btn" id="day1">SAT 15 FEB</button>
+        <button class="buttons date-btn" id="day2">SUN 16 FEB</button>
+        <button class="buttons date-btn" id="day3">MON 17 FEB</button>
+    </div>
+    
+    <div id="time">
+        Select Time:
+        <button class="buttons time-btn" id="time1">10:00am</button>
+        <button class="buttons time-btn" id="time2">03:00pm</button>
+        <button class="buttons time-btn" id="time3">09:00pm</button>
+    </div>
+    
+    <div id="status">
+        <div class="status-item">
+            <span style="display: inline-block; width: 14px; height: 14px; background: #43d6f4;"></span>
+            <span>Selected</span>
+        </div>
+        <div class="status-item">
+            <span style="display: inline-block; width: 14px; height: 14px; background: #939090;"></span>
+            <span>Vacant</span>
+        </div>
+        <div class="status-item">
+            <span style="display: inline-block; width: 14px; height: 14px; background: #3e3d3d;"></span>
+            <span>Occupied</span>
+        </div>
+    </div>
+    
+    <div id="theater">
+        <div class="screen"></div>
+        <p>SCREEN</p>
+        <div class="seats" id="seatGrid">
+            <!-- Seats will be generated by JavaScript -->
+        </div>
+        <div>
+            <button id="proceedBtn" class="buttons">Book Now</button>
+        </div>
+    </div>
+    
+    <div id="footer">&copy; Online Movie Ticket Booking 2025</div>
+    
+    <script>
+         // Function to get booked seats
+         async function fetchBookedSeats() {
+                try {
+                    const movie = localStorage.getItem("selectedMovie");
+                    const showtime = localStorage.getItem("selectedTime");
+                    const showdate = localStorage.getItem("selectedDate");
+                    const url = `http://bookmyticket-backend-cg1z.onrender.com/api/seats?movie=${encodeURIComponent(movie)}&showtime=${encodeURIComponent(showtime)}&showdate=${encodeURIComponent(showdate)}`;
+                    const response = await fetch(url);
+
+                    if (response.ok) {
+                        return await response.json();
+                    } else {
+                        console.error("Failed to fetch booked seats");
+                        return []; // Return empty array if fetch fails
+                    }
+                } catch (error) {
+                    console.error("Error fetching booked seats:", error);
+                    return []; // Return empty array if fetch fails
+                }
+            }
+            
+            // Date button handling
+            const dateButtons = document.querySelectorAll(".date-btn");
+            dateButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    dateButtons.forEach(btn => btn.classList.remove("selected"));
+                    this.classList.add("selected");
+                    localStorage.setItem("selectedDate", this.textContent);
+                    generateGrid();
+                });
+            });
+            
+            // Time button handling
+            const timeButtons = document.querySelectorAll(".time-btn");
+            timeButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    timeButtons.forEach(btn => btn.classList.remove("selected"));
+                    this.classList.add("selected");
+                    localStorage.setItem("selectedTime", this.textContent);
+                    generateGrid();
+
+                });
+            });
+            
+            
+            
+            // Track selected seats
+            function updateSelectedSeats() {
+                const selectedSeats = document.querySelectorAll(".seat.selected");
+                const seatNumbers = Array.from(selectedSeats).map(seat => 
+                    seat.getAttribute("data-seat")
+                );
+                localStorage.setItem("selectedSeatNumbers", JSON.stringify(seatNumbers));
+                localStorage.setItem("selectedSeats", selectedSeats.length.toString());
+            }
+            
+            // Handle proceed button
+            document.getElementById("proceedBtn").addEventListener("click", function() {
+                const selectedSeats = document.querySelectorAll(".seat.selected");
+                if (selectedSeats.length === 0) {
+                    alert("Please select at least one seat.");
+                    return;
+                }
+                
+                // Get the selected seat numbers
+                const seatNumbers = Array.from(selectedSeats).map(seat => 
+                    seat.getAttribute("data-seat")
+                );
+                
+                // Try to save to backend
+                try {
+                    fetch('http://bookmyticket-backend-cg1z.onrender.com/api/seats', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user: "GuestUser",
+                            movie: localStorage.getItem("selectedMovie"),
+                            selectedSeats: seatNumbers,
+                            showtime: localStorage.getItem("selectedTime"),
+                            showdate: localStorage.getItem("selectedDate"),
+                            totalPrice: seatNumbers.length * 200 // Assuming ₹200 per seat
+                        })
+                    });
+                } catch (error) {
+                    console.error("Error saving seats:", error);
+                }
+                
+                // Proceed to billing regardless of API success
+                window.location.href = "billing.html";
+            });
+
+            ////////checckkkkkkkk herrrrrrrrrrrrrreeeeeeeeeeee
+        document.addEventListener("DOMContentLoaded", function() {
+            // Retrieve selected movie from localStorage
+            const movieTitle = localStorage.getItem("selectedMovie") || "Movie Title";
+            const moviePoster = localStorage.getItem("selectedPoster") || "";
+            
+            // Set movie details
+            document.getElementById("movieTitle").textContent = movieTitle;
+            
+            // Handle the poster image properly
+            const posterImg = document.getElementById("moviePoster");
+            if (moviePoster && moviePoster !== "null" && moviePoster !== "undefined") {
+                posterImg.src = moviePoster;
+            } else {
+                // Use a default placeholder if no poster is available
+                posterImg.src = "/api/placeholder/150/225";
+            }
+            
+            // Add error handling for image loading
+            posterImg.onerror = function() {
+                console.error("Failed to load movie poster");
+                posterImg.src = "/api/placeholder/150/225";
+                // Alternative: use a data URI for a basic image placeholder
+                // posterImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='225' viewBox='0 0 150 225'%3E%3Crect width='150' height='225' fill='%231a1a1a'/%3E%3Ctext x='75' y='112' font-family='Arial' font-size='14' fill='%23ffffff' text-anchor='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+            };
+
+            const dateButtons = document.querySelectorAll(".date-btn");
+
+function getFormattedDate(offsetDays = 0) {
+    const date = new Date();
+    date.setDate(date.getDate() + offsetDays); // Add days to current date
+    const options = { weekday: 'short', day: '2-digit', month: 'short' };
+    return date.toLocaleDateString('en-GB', options).toUpperCase(); // Format: "SAT 15 FEB"
+}
+
+dateButtons.forEach((btn, index) => {
+    const label = getFormattedDate(index); // index = 0 (today), 1 (tomorrow), ...
+    btn.textContent = label;
+});
+            
+            generateGrid();
+           
+            // Default selected
+            dateButtons[0].click();
+            timeButtons[0].click();
+           
+        });
+        function generateGrid()
+        {
+            // Fetch booked seats from server or localStorage
+            fetchBookedSeats().then(bookedSeats => {
+                // Generate seat grid (8 rows, 10 seats per row)
+                const seatGrid = document.getElementById("seatGrid");
+                seatGrid.innerHTML = "";
+                const rows = 8;
+                const seatsPerRow = 10;
+                const rowLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                
+                for (let i = 0; i < rows; i++) {
+                    for (let j = 0; j < seatsPerRow; j++) {
+                        const seat = document.createElement("div");
+                        seat.className = "seat";
+                        const seatNumber = `${rowLabels[i]}${j+1}`;
+                        seat.setAttribute("data-seat", seatNumber);
+                        seat.textContent = seatNumber;
+                        
+                        // Mark seat as occupied if it's in the bookedSeats array
+                        if (bookedSeats.includes(seatNumber)) {
+                            seat.classList.add("occupied");
+                        } else {
+                            seat.addEventListener("click", function() {
+                                if (!this.classList.contains("occupied")) {
+                                    this.classList.toggle("selected");
+                                    updateSelectedSeats();
+                                }
+                            });
+                        }
+                        
+                        seatGrid.appendChild(seat);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book My Ticket</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0d1b2a;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .navbar {
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1b263b;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+        }
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .search-bar {
+            margin-right: 40px; 
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+        .container {
+            margin-top: 80px;
+        }
+        .movie-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding: 10px;
+            scroll-behavior: smooth;
+            white-space: nowrap;
+        }
+        .movie-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .movie-container::-webkit-scrollbar-thumb {
+            background: #ff4757;
+            border-radius: 5px;
+        }
+        .movie {
+            cursor: pointer;
+            min-width: 200px;
+            text-align: center;
+        }
+        .movie img {
+            width: 200px;
+            height: 300px;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .movie img:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.5);
+        }
+        .movie-details {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            width: auto; /* Adjust width automatically */
+            max-width: 80%; /* Prevents it from getting too wide */
+            max-height: 80vh; /* Prevents it from overflowing screen */
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            overflow-y: auto; /* Scroll if content is too long */
+            white-space: normal; /* Allows text to wrap */
+            word-wrap: break-word; /* Ensures long words don't overflow */
+        }
+
+        .movie-details.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .book-btn {
+            background-color: red;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .book-btn:hover {
+            background-color: darkred;
+        }
+        .close-btn {
+            background-color: gray;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Book My Ticket</h1>
+        <input type="text" id="search" class="search-bar" placeholder="Search">
+    </div>
+    
+    <div class="container">
+        <h2>Now Showing</h2>
+        <div class="movie-container" id="current-movies"></div>
+        
+        <h2>Upcoming Movies</h2>
+        <div class="movie-container" id="upcoming-movies"></div>
+    </div>
+    
+    <div class="movie-details" id="movie-details">
+        <h3 id="details-title"></h3>
+        <p id="details-description"></p>
+        <button class='book-btn' onclick='bookTicket()'>Book</button>
+        <button class='close-btn' onclick='closeDetails()'>Close</button>
+    </div>
+    
+    <script>
+        const movies = [
+            { title: "Black Panther", poster: "movieA.jpg", description: "Follows TChalla, heir to the hidden but advanced kingdom of Wakanda, who must lead his people into a new future and confront a challenger from his nations past." },
+            { title: "Wonder Women", poster: "movieB.jpg", description: "Diana (Wonder Woman) demonstrates courage by defending what she believes in, and by using her strength to fight evil." },
+            { title: "Gaurdians of the Galaxy", poster: "movieC.jpg", description: "A group of intergalactic mercenaries, including Star-Lord, Gamora, Rocket, Groot, and Drax, team up to save the galaxy from threats." },
+            { title: "Vikram", poster: "movieD.jpg", description: "A high-octane action thriller from Indian cinema focusing on a special agents mission to eliminate a gang of masked murderers." },
+            { title: "Soorarai Pottru", poster: "movieE.jpg", description: "An inspiring tale of an ambitious man striving to launch a low-cost airline, overcoming numerous personal and professional challenges." },
+            { title: "Padmavati", poster: "movieF.jpg", description: "A historical drama depicting the valor and sacrifice of Rani Padmavati, a legendary queen known for her beauty and courage." },
+            { title: "Joker", poster: "movieH.jpg", description: "A dark character study of Arthur Fleck, a failed comedian in Gotham City, whose descent into madness leads him to become the notorious Joker." },
+            { title: "Oppenheimer", poster: "movieI.jpg", description: "A biographical film chronicling the life of J. Robert Oppenheimer, the physicist who played a pivotal role in developing the atomic bomb during World War II." }
+        ];
+        
+        const upcomingMovies = [
+            { title: "96", poster: "upcomingA.jpg", description: "A poignant romantic drama about two high school sweethearts who reunite after 22 years at a school reunion, rekindling unresolved emotions." },
+            { title: "Shadow and Bone", poster: "upcomingB.jpg", description: "Based on the Grishaverse novels, this fantasy adventure follows a young soldier who discovers a magical power that could unite her war-torn world." }
+        ];
+        
+        function displayMovies(movieList, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+            movieList.forEach(movie => {
+                const movieElement = document.createElement("div");
+                movieElement.classList.add("movie");
+                movieElement.innerHTML = `<img src="${movie.poster}" alt="${movie.title}" onclick="showDetails('${movie.title}', '${movie.description}', '${movie.poster}')"><p>${movie.title}</p>`;
+                container.appendChild(movieElement);
+            });
+        }
+        let selectedTitle = "";
+        let selectedPoster = "";
+
+function showDetails(title, description, poster) {
+    selectedTitle = title;
+    selectedPoster = poster;
+
+    document.getElementById("details-title").textContent = title;
+    document.getElementById("details-description").textContent = description;
+    const details = document.getElementById("movie-details");
+    details.classList.add("show");
+}
+
+        function closeDetails() {
+            document.getElementById("movie-details").classList.remove("show");
+        }
+        
+        function bookTicket() {
+    localStorage.setItem("selectedMovie", selectedTitle);
+    localStorage.setItem("selectedPoster", selectedPoster);
+    window.location.href = "seatSelection.html";
+}
+
+        
+        document.getElementById("search").addEventListener("input", function() {
+            const searchText = this.value.toLowerCase();
+            const filteredMovies = movies.filter(m => m.title.toLowerCase().includes(searchText));
+            displayMovies(filteredMovies, "current-movies");
+        });
+        
+        displayMovies(movies, "current-movies");
+        displayMovies(upcomingMovies, "upcoming-movies");
+    </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Gateway</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #f2f2f2;
+      text-align: center;
+      padding-top: 50px;
+    }
+    .payment-box {
+      background: white;
+      display: inline-block;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px #ccc;
+    }
+    input, button {
+      padding: 10px;
+      width: 80%;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-box">
+    <h2>Mock Payment Gateway</h2>
+    <p>Card Number:</p>
+    <input type="text" placeholder="1234 5678 9012 3456"><br>
+    <p>Expiry:</p>
+    <input type="text" placeholder="MM/YY"><br>
+    <p>CVV:</p>
+    <input type="password" placeholder="123"><br>
+    <button onclick="completePayment()">Pay</button>
+  </div>
+
+  <script>
+    function completePayment() {
+      alert("Payment Successful!");
+      window.location.href = "success.html";
+    }
+  </script>
+</body>
+</html>

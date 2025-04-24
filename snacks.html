@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Snacks & Beverages</title>
+      <link rel="stylesheet" href="snacksCSS.css">
+      <script defer src="snacksJS.js"></script>
+  </head>
+  <body>
+      <div class="navbar">
+          <h1>Book My Ticket</h1>
+      </div>
+      <div class="container">
+          <h1 class="section-title">Snacks & Beverages</h1>
+  
+          <div class="image-row">
+              <div class="snack-item" data-name="Popcorn" data-price="150">
+                  <img src="popcorn.jpeg" alt="Popcorn">
+                  <p>Popcorn</p>
+                  <p class="price">Rs.150</p>
+              </div>
+              <div class="snack-item" data-name="Veg Burger" data-price="200">
+                  <img src="burger.jpeg" alt="Veg Burger">
+                  <p>Veg Burger</p>
+                  <p class="price">Rs.200</p>
+              </div>
+              <div class="snack-item" data-name="French Fries" data-price="100">
+                  <img src="frenchfries.jpeg" alt="French Fries">
+                  <p>French Fries</p>
+                  <p class="price">Rs.100</p>
+              </div>
+              <div class="snack-item" data-name="Donuts" data-price="70">
+                  <img src="donut.jpeg" alt="Donuts">
+                  <p>Donuts</p>
+                  <p class="price">Rs.70 per piece</p>
+              </div>
+              <div class="snack-item" data-name="Cake" data-price="100">
+                  <img src="cake.jpeg" alt="Cake">
+                  <p>Cake</p>
+                  <p class="price">Rs.100 per piece</p>
+              </div>
+              <div class="snack-item" data-name="Coke" data-price="80">
+                  <img src="coke.jpeg" alt="Coke">
+                  <p>Coke</p>
+                  <p class="price">Rs.80</p>
+              </div>
+          </div>
+  
+          <div class="button-row">
+              <!-- Quantity Selectors for each snack -->
+              <div class="quantity-selector"><button class="decrease">-</button><span class="quantity">0</span><button class="increase">+</button></div>
+              <div class="quantity-selector"><button class="decrease">-</button><span class="quantity">0</span><button class="increase">+</button></div>
+              <div class="quantity-selector"><button class="decrease">-</button><span class="quantity">0</span><button class="increase">+</button></div>
+              <div class="quantity-selector"><button class="decrease">-</button><span class="quantity">0</span><button class="increase">+</button></div>
+              <div class="quantity-selector"><button class="decrease">-</button><span class="quantity">0</span><button class="increase">+</button></div>
+              <div class="quantity-selector"><button class="decrease">-</button><span class="quantity">0</span><button class="increase">+</button></div>
+          </div>
+  
+          <div class="total-display">
+              <strong>Total Amount: Rs <span id="totalAmount">0</span></strong>
+          </div>
+  
+          <input type="button" class="done-btn" value="Done" onclick="placeSnackOrder()"/>
+      </div>
+  </body>
+  </html>
+  
