@@ -188,7 +188,7 @@
                     const movie = localStorage.getItem("selectedMovie");
                     const showtime = localStorage.getItem("selectedTime");
                     const showdate = localStorage.getItem("selectedDate");
-                    const url = `http://bookmyticket-backend-cg1z.onrender.com/api/seats?movie=${encodeURIComponent(movie)}&showtime=${encodeURIComponent(showtime)}&showdate=${encodeURIComponent(showdate)}`;
+                    const url = `https://bookmyticket-backend-cg1z.onrender.com/api/seats?movie=${encodeURIComponent(movie)}&showtime=${encodeURIComponent(showtime)}&showdate=${encodeURIComponent(showdate)}`;
                     const response = await fetch(url);
 
                     if (response.ok) {
@@ -253,7 +253,7 @@
                 
                 // Try to save to backend
                 try {
-                    fetch('http://bookmyticket-backend-cg1z.onrender.com/api/seats', {
+                    fetch('https://bookmyticket-backend-cg1z.onrender.com/api/seats', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

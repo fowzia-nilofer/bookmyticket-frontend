@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Fetch already booked seats from server
     try {
-        const response = await fetch('http://bookmyticket-backend-cg1z.onrender.com/api/seats');
+        const response = await fetch('https://bookmyticket-backend-cg1z.onrender.com/api/seats');
         const bookedSeats = await response.json();
 
         seatElements.forEach(seat => {
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         try {
-            const res = await fetch('http://bookmyticket-backend-cg1z.onrender.com/api/seats', {
+            const res = await fetch('https://bookmyticket-backend-cg1z.onrender.com/api/seats', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
