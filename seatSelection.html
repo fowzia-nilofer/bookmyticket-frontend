@@ -168,6 +168,10 @@
         </div>
     </div>
     
+    <div id="loadingSpinner" style="text-align: center; margin-top: 20px; font-size: 18px;">
+        Loading seats...
+    </div>
+
     <div id="theater">
         <div class="screen"></div>
         <p>SCREEN</p>
@@ -322,6 +326,8 @@ dateButtons.forEach((btn, index) => {
         });
         function generateGrid()
         {
+            const spinner = document.getElementById("loadingSpinner");
+            spinner.style.display = "block"; // Show loading spinner
             // Fetch booked seats from server or localStorage
             fetchBookedSeats().then(bookedSeats => {
                 // Generate seat grid (8 rows, 10 seats per row)
@@ -354,6 +360,7 @@ dateButtons.forEach((btn, index) => {
                         seatGrid.appendChild(seat);
                     }
                 }
+                spinner.style.display = "none";
             });
         }
     </script>
